@@ -14,8 +14,8 @@ use DBFiverr
 CREATE TABLE Person(
 	email_id varchar(100),
 	password binary(64) NOT NULL,
-	first_name varchar(100) NOT NULL,
-	last_name varchar(100) NOT NULL,
+	firstname varchar(100) NOT NULL,
+	lastname varchar(100) NOT NULL,
 	credit money DEFAULT 0,
 	CONSTRAINT ck_checkmoneypositive CHECK (credit >= 0),
 	CONSTRAINT pk_email PRIMARY KEY (email_id)
@@ -139,4 +139,31 @@ CREATE TABLE Person_Message(
 	);
 GO
 
+--Insert records into Person table
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('john.doe@gmail.com', HASHBYTES('SHA2_512', 'vfdwes'), N'John',N'Doe');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('michelle.davison@gmail.com', HASHBYTES('SHA2_512', 'adsvc'), N'Michelle',N'Davison');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('mayteh.kendall@yahoo.com', HASHBYTES('SHA2_512', 'ghjgss'), N'Kendall',N'Mayteh');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('bruce.onandonga12@gmail.com', HASHBYTES('SHA2_512', 'vhbdsserfsa'), N'Onandonga',N'Bruce');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('tony.antavius@asu.edu', HASHBYTES('SHA2_512', 'vcngfhgfscx'), N'Antavius',N'Anthony');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('danny.bradley34@gmail.com', HASHBYTES('SHA2_512', 'jtkjhkhfg'), N'Bradlee',N'Danny');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('reynaldo.suscipe@gmail.com', HASHBYTES('SHA2_512', 'asgfdvger'), N'Suscipe',N'Reynaldo');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('ger.sullivan@asu.edu', HASHBYTES('SHA2_512', 'sgfdhgft'), N'Sullivan',N'Geraldine');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('nicole.reh123@gmail.com', HASHBYTES('SHA2_512', 'ssfsfawqq'), N'Nicole',N'Rehdahl');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('katy.smith@yahoo.com', HASHBYTES('SHA2_512', 'bgfbrtsf'), N'Katy',N'Smith');
+
+--Insert sample categories for services
+INSERT [dbo].Category (category_id, category_name) VALUES (1, 'Graphics & Design');
+INSERT [dbo].Category (category_id, category_name) VALUES (2, 'Digital Marketing');
+INSERT [dbo].Category (category_id, category_name) VALUES (3, 'Video & Animation');
+INSERT [dbo].Category (category_id, category_name) VALUES (4, 'Audio & Music');
+INSERT [dbo].Category (category_id, category_name) VALUES (5, 'Programming & Technology');
+INSERT [dbo].Category (category_id, category_name) VALUES (6, 'Advertising');
+
+--insert each persons category preferences
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('john.doe@gmail.com', 1);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('john.doe@gmail.com', 3);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('john.doe@gmail.com', 4);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 4);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 2);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 5);
 
