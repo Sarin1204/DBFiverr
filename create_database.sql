@@ -47,7 +47,7 @@ CREATE TABLE New_Request(
 	email_id varchar(100) NOT NULL,
 	category_id int NOT NULL, 
 	description varchar(max),
-	deadline datetime, 
+	deadline int, 
 	CONSTRAINT pk_requestid PRIMARY KEY (request_id),
 	CONSTRAINT fk_email_request FOREIGN KEY (email_id) REFERENCES Person(email_id),
 	CONSTRAINT fk_categorgy_request FOREIGN KEY (category_id) REFERENCES Category(category_id)
@@ -56,7 +56,8 @@ GO
 
 --creating table pending request
 CREATE TABLE Pending_Request(
-	pending_request_id int,
+	pending_request_id uniqueidentifier 
+		DEFAULT newid(),
 	requester_id varchar(100) NOT NULL,
 	provider_id varchar(100) NOT NULL,
 	category_id int NOT NULL, 
@@ -71,7 +72,8 @@ GO
 
 --creating table completed request
 CREATE TABLE Completed_Request(
-	completed_request_id int,
+	completed_request_id uniqueidentifier 
+		DEFAULT newid(),
 	requester_id varchar(100) NOT NULL,
 	provider_id varchar(100) NOT NULL,
 	category_id int NOT NULL, 
@@ -166,4 +168,28 @@ INSERT [dbo].Person_Category (email_id, category_id) VALUES ('john.doe@gmail.com
 INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 4);
 INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 2);
 INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 5);
+
+--Insert sample new requests
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('john.doe@gmail.com', 1, 'I want to get a logo designed for my company', 5);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('bruce.onandonga12@gmail.com', 2, 'I want to professional photoshoot done', 3);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('danny.bradley34@gmail.com', 3, 'I want to make an animated cartoon character', 5);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('ger.sullivan@asu.edu', 4, 'I want to get a disc recorded', 7);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('katy.smith@yahoo.com', 5, 'I want to get my code in java verified', 9);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('mayteh.kendall@yahoo.com', 6, 'I want ideas to launch a new advertising campaign for a product', 10);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('michelle.davison@gmail.com', 1, 'I want to get a logo designed for my company', 15);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('nicole.reh123@gmail.com', 3, 'I want to make a professional vedio for advertisement campaign', 4);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('reynaldo.suscipe@gmail.com', 5, 'I want a python programmer to code a gui', 6);
+INSERT [dbo].New_Request (email_id, category_id, description, deadline) VALUES ('tony.antavius@asu.edu', 6, 'I want to get a advertisement banner created for my website', 8);
+
+--Insert sample completed requests
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('john.doe@gmail.com', 'bruce.onandonga12@gmail.com', 1, 'I want to get a logo designed for my company', 1);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('bruce.onandonga12@gmail.com', 'john.doe@gmail.com', 2, 'I want to professional photoshoot done', 1);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('danny.bradley34@gmail.com', 'bruce.onandonga12@gmail.com',3, 'I want to make an animated cartoon character', 0);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('ger.sullivan@asu.edu', 'mayteh.kendall@yahoo.com', 4, 'I want to get a disc recorded', 0);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('katy.smith@yahoo.com', 'bruce.onandonga12@gmail.com', 5, 'I want to get my code in java verified', 0);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('mayteh.kendall@yahoo.com', 'michelle.davison@gmail.com', 6, 'I want ideas to launch a new advertising campaign for a product', 1);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('michelle.davison@gmail.com', 'john.doe@gmail.com',1, 'I want to get a logo designed for my company', 1);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('nicole.reh123@gmail.com', 'tony.antavius@asu.edu', 3, 'I want to make a professional vedio for advertisement campaign', 1);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('reynaldo.suscipe@gmail.com','michelle.davison@gmail.com', 5, 'I want a python programmer to code a gui', 1);
+INSERT [dbo].Completed_Request (requester_id, provider_id, category_id, description, accepted) VALUES ('tony.antavius@asu.edu', 'michelle.davison@gmail.com', 6, 'I want to get a advertisement banner created for my website', 0);
 
