@@ -56,7 +56,7 @@ GO
 
 --creating table pending request
 CREATE TABLE Pending_Request(
-	pending_request_id int,
+	pending_request_id uniqueidentifier default NEWID(),
 	requester_id varchar(100) NOT NULL,
 	provider_id varchar(100) NOT NULL,
 	category_id int NOT NULL, 
@@ -71,7 +71,7 @@ GO
 
 --creating table completed request
 CREATE TABLE Completed_Request(
-	completed_request_id int,
+	completed_request_id uniqueidentifier default NEWID(),
 	requester_id varchar(100) NOT NULL,
 	provider_id varchar(100) NOT NULL,
 	category_id int NOT NULL, 
@@ -166,4 +166,44 @@ INSERT [dbo].Person_Category (email_id, category_id) VALUES ('john.doe@gmail.com
 INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 4);
 INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 2);
 INSERT [dbo].Person_Category (email_id, category_id) VALUES ('michelle.davison@gmail.com', 5);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('mayteh.kendall@yahoo.com', 6);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('mayteh.kendall@yahoo.com', 3);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('mayteh.kendall@yahoo.com', 1);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('bruce.onandonga12@gmail.com', 5);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('bruce.onandonga12@gmail.com', 3);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('tony.antavius@asu.edu', 5);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('tony.antavius@asu.edu', 2);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('danny.bradley34@gmail.com', 1);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('danny.bradley34@gmail.com', 2);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('reynaldo.suscipe@gmail.com', 2);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('reynaldo.suscipe@gmail.com', 6);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('ger.sullivan@asu.edu', 3);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('ger.sullivan@asu.edu', 5);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('nicole.reh123@gmail.com', 5);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('nicole.reh123@gmail.com', 6);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('katy.smith@yahoo.com', 2);
+INSERT [dbo].Person_Category (email_id, category_id) VALUES ('katy.smith@yahoo.com', 4);
 
+--insert new service offers for each user
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('john.doe@gmail.com', 3, 'I will create videos for you!!!');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('michelle.davison@gmail.com', 4, 'Let me create music using my amazing music skills for you!');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('mayteh.kendall@yahoo.com', 2, 'I have 1500 followers on Facebook. I can market your product to them!');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('bruce.onandonga12@gmail.com', 1, 'I can design your next flyer!');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('tony.antavius@asu.edu', 6, 'I will hand out flyers for your business.');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('danny.bradley34@gmail.com', 5, 'I will fix the HTML, CSS bugs on your website.');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('reynaldo.suscipe@gmail.com', 4, 'I can write classical music for you.');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('ger.sullivan@asu.edu', 5, 'I will help you normalize your database design!');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('nicole.reh123@gmail.com', 1, 'I can paint a new poster for you');
+INSERT [dbo].Service(email_id, category_id, description) VALUES ('katy.smith@yahoo.com', 6, 'I can help you advertise.');
+
+--insert records into pending requests table
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('katy.smith@yahoo.com','bruce.onandonga12@gmail.com', 6, 'I need someone to hand out flyers for my ice cream business.', '20160408');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('reynaldo.suscipe@gmail.com','ger.sullivan@asu.edu', 5, 'I need my database design normalized.', '20160410');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('mayteh.kendall@yahoo.com','nicole.reh123@gmail.com', 1, 'I need a new poster painted.', '20160405');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('tony.antavius@asu.edu','john.doe@gmail.com', 3, 'I need a video of my birthday made.', '20160402');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('nicole.reh123@gmail.com','bruce.onandonga12@gmail.com', 1, 'I need a new design for a flyer.', '20160414');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('bruce.onandonga12@gmail.com','michelle.davison@gmail.com', 4, 'I need someone to create music for my movie.', '20160412');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('michelle.davison@gmail.com','mayteh.kendall@yahoo.com', 2, 'I need my amazing product marketed to businesses.', '20160415');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('john.doe@gmail.com','danny.bradley34@gmail.com', 6, 'I need some HTML/CSS fixed for my website', '20160409');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('michelle.davison@gmail.com','katy.smith@yahoo.com', 6, 'I need someone to help me advertise my business', '20160408');
+INSERT [dbo].Pending_Request(requester_id, provider_id, category_id, description, deadline) VALUES ('danny.bradley34@gmail.com','bruce.onandonga12@gmail.com', 1, 'I need someone to design a new flyer.', '20160424');
