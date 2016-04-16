@@ -155,7 +155,7 @@ CREATE TABLE Automated_Message(
 		DEFAULT newid(),
 	subject  varchar(max),
 	body varchar(max),
-	CONSTRAINT pk_automated_message PRIMARY KEY (message_id)
+	CONSTRAINT pk_automated_message PRIMARY KEY (auto_message_id)
 );
 GO
 
