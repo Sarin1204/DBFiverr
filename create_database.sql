@@ -151,8 +151,7 @@ CREATE TABLE Person_Message(
 GO
 
 CREATE TABLE Automated_Message(
-	auto_message_id uniqueidentifier 
-		DEFAULT newid(),
+	auto_message_id int identity(1,1),
 	subject  varchar(max),
 	body varchar(max),
 	CONSTRAINT pk_automated_message PRIMARY KEY (auto_message_id)
@@ -402,3 +401,31 @@ insert into dbo.Person_Message values ('mayteh.kendall@yahoo.com', @message_id,1
 insert into dbo.Person_Message values ('tony.antavius@asu.edu', @message_id,3,@thread_id,0)
 
 GO
+
+CREATE PROCEDURE sp_compose_new_message_thread
+--exec sp_compose_new_message_thread 'mayteh.kendall@yahoo.com','john.doe@gmail.com',null, 'Hi!!','Hey, How are you doing?'
+ @author_id varchar(max),
+ @receiver_id varchar (max),
+ @request_id uniqueidentifier,
+ @msg_subject varchar(max),
+ @body varchar(max)
+AS 
+declare @message_id uniqueidentifier
+set @message_id = NEWID()
+declare @thread_id uniqueidentifier
+set @thread_id = NEWID()
+begin try
+	begin tran
+	INSERT INTO [dbo].[Message]([message_id],[author_id],[thread_id],[msg_subject],[body],[msg_date],[request_id])
+		VALUES (@message_id,@author_id, @thread_id,@msg_subject,@body,getdate(), @request_id);
+
+insert into dbo.Person_Message values (@receiver_id, @message_id,1,@thread_id,0)
+
+insert into dbo.Person_Message values (@author_id, @message_id,3,@thread_id,0)
+	commit tran
+end try
+begin catch
+	print 'sp_compose_new_message_thread failed'
+end catch
+go
+
