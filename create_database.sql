@@ -429,3 +429,62 @@ begin catch
 end catch
 go
 
+
+
+
+--Stored proc for inserting data into Person table
+create proc sp_insert_person
+@email_id varchar(100), @password varchar(100), @firstname varchar(100), @lastname varchar(100) 
+as 
+begin
+insert into Person(email_id, password, firstname, lastname)
+values(@email_id, HASHBYTES('SHA2_512',@password), @firstname, @lastname);
+end
+
+exec sp_insert_person 'Admin@WorkNet.com','asdfgh','Admin','WorkNet';
+
+
+
+--Stored proc for inserting data into New_request table
+create proc sp_insert_new_request
+@email_id varchar(100), @category_id int,@title varchar(max),  @description varchar(max), @days_to_complete int
+as
+begin
+if((select (totalcredit-reservedcredit) from person where email_id=@email_id) >5)
+begin 
+insert into New_Request(email_id, category_id, title, description, days_to_complete)
+values(@email_id, @category_id,@title, @description, @days_to_complete);
+end
+else
+begin
+declare @body varchar(max);
+select @body=body from dbo.Automated_Message where auto_message_id=6;
+exec sp_compose_new_message_thread 'Admin@WorkNet.com',@email_id,null,'Creation of new request failed', @body;
+end
+end
+
+--exec sp_insert_new_request 'danny.bradley34@gmail.com', 1, 'Help', 'I want something', 5;
+
+
+--Stored proc for moving data from new-request to pending_request
+create proc sp_insert_pending_request @request_id uniqueidentifier, @provider_id varchar(100)
+as
+
+begin
+begin tran
+declare  @requester_id varchar(100),@category_id int,@description varchar(max) ,@title varchar(max),@days_to_complete int;
+select @requester_id=email_id, @category_id=category_id, @description=description, @title=title,@days_to_complete=days_to_complete
+from New_Request
+where request_id=@request_id;
+
+insert into Pending_Request(requester_id, provider_id, category_id, title, description, deadline)
+values(@requester_id,@provider_id,@category_id,@title, @description, dateadd(day,@days_to_complete,getdate()))
+
+delete from New_Request
+where request_id=@request_id
+commit tran
+end
+
+--exec sp_insert_pending_request '79371517-FD0B-4D75-A2BD-24D6F35D7192','danny.bradley34@gmail.com'
+
+
