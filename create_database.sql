@@ -428,6 +428,46 @@ begin catch
 	print 'sp_compose_new_message_thread failed'
 end catch
 go
+--insert messages for automated message table
+INSERT INTO Automated_Message (body)
+VAlUES ('You have successfully registered on WorkNet. Take the experience of outsourcing and freelancing together. Happy working!');--subject ('Welcome' +@firstname, @lastname)
+INSERT INTO Automated_Message (body)
+VAlUES ('You have a new service provider requesting to serve your request.');--subject('action required for request' + @title)
+INSERT INTO Automated_Message (body)
+VAlUES ('Your request has reached deadline. Kindly review the work and take action.'); --subject ('Request' +@title +'has reached deadline)
+INSERT INTO Automated_Message (body)
+VAlUES ('The requester liked your work. Credits are being transferred on your account.');--subject('Credits transferred for request' + @title)
+INSERT INTO Automated_Message (body)
+VALUES ('The requester did not like your work. You will receive credits once the legal department verifies the request');--subject('Credits on hold for request' + @title)
+INSERT INTO Automated_Message (body)
+VAlUES ('You donot have enough credits to post the request. Please purchase more credits to to be able to post a new request');--subject('Not enough credits for posting new request')
+--SQL Scripts
+--INSERT INTO SERVICE
+GO
+CREATE PROCEDURE sp_service
+@email_service varchar(100),
+@category int,
+@title varchar(max),
+@description varchar(max)
+AS
+	INSERT INTO Service ([dbo].email_id, [dbo].category_id, [dbo].title, [dbo].description)
+	VAlUES (@email_service, @category, @title, @description)
+GO
+
+--sample execute script to insert into service
+--EXECUTE sp_service 'bruce.onandonga12@gmail.com', 1,'I will photoshop any image', 'Hi, you will receive 1024*1024 / 512*512(or desired size) png with transparent background'
+--GO
+
+--delete from service
+CREATE PROCEDURE sp_delete_service
+@service_id uniqueidentifier
+AS
+DELETE FROM Service WHERE service_id = @service_id
+GO
+
+--sample execute script to delete from service
+--EXECUTE sp_delete_service '50A5A39E-90F1-494A-8D0D-59A373293225'
+--GO
 
 
 
@@ -440,8 +480,8 @@ begin
 insert into Person(email_id, password, firstname, lastname)
 values(@email_id, HASHBYTES('SHA2_512',@password), @firstname, @lastname);
 end
-
-exec sp_insert_person 'Admin@WorkNet.com','asdfgh','Admin','WorkNet';
+GO
+--exec sp_insert_person 'Admin@WorkNet.com','asdfgh','Admin','WorkNet';
 
 
 
@@ -462,7 +502,7 @@ select @body=body from dbo.Automated_Message where auto_message_id=6;
 exec sp_compose_new_message_thread 'Admin@WorkNet.com',@email_id,null,'Creation of new request failed', @body;
 end
 end
-
+GO
 --exec sp_insert_new_request 'danny.bradley34@gmail.com', 1, 'Help', 'I want something', 5;
 
 
@@ -484,7 +524,32 @@ delete from New_Request
 where request_id=@request_id
 commit tran
 end
+GO
 
 --exec sp_insert_pending_request '79371517-FD0B-4D75-A2BD-24D6F35D7192','danny.bradley34@gmail.com'
+
+
+--insert into completed request table
+
+CREATE PROCEDURE sp_completed_request
+@pending_request_id uniqueidentifier,
+@accepted_status bit
+AS
+BEGIN
+	DECLARE @requester_id varchar(100), @provider_id varchar(100), @category_id int, @title varchar(max), @description varchar(max)
+	
+	SELECT @requester_id = requester_id, @provider_id = provider_id, @category_id=category_id, @title = title, @description = description
+	FROM Pending_Request WHERE pending_request_id = @pending_request_id;
+	
+	INSERT INTO Completed_Request (requester_id, provider_id, category_id, description, accepted, title)
+	VALUES (@requester_id, @provider_id, @category_id, @description, @accepted_status, @title);
+
+	DELETE FROM Pending_Request
+	WHERE pending_request_id= @pending_request_id;
+END
+
+--sample execute script to move the request from pending_request to completed_request
+--EXECUTE sp_completed_request '52001416-AD96-496B-AB7C-00898A1A0541', 1
+
 
 
