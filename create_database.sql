@@ -536,6 +536,7 @@ CREATE PROCEDURE sp_completed_request
 @accepted_status bit
 AS
 BEGIN
+	begin tran
 	DECLARE @requester_id varchar(100), @provider_id varchar(100), @category_id int, @title varchar(max), @description varchar(max)
 	
 	SELECT @requester_id = requester_id, @provider_id = provider_id, @category_id=category_id, @title = title, @description = description
@@ -546,6 +547,7 @@ BEGIN
 
 	DELETE FROM Pending_Request
 	WHERE pending_request_id= @pending_request_id;
+	commit tran
 END
 
 --sample execute script to move the request from pending_request to completed_request
