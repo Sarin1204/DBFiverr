@@ -642,9 +642,8 @@ deallocate cr_getmaxdatefromthread;
 end
 go
 
-exec sp_retrieveplaceholdermessages 'mayteh.kendall@yahoo.com', 1;
+--exec sp_retrieveplaceholdermessages 'mayteh.kendall@yahoo.com', 1;
 
-select * from dbo.Message;
 
 
 
