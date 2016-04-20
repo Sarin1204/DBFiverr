@@ -551,7 +551,7 @@ BEGIN
 	WHERE pending_request_id= @pending_request_id;
 	commit tran
 END
-
+go
 --Procedure for retrieving n records from new request table given email_id
 create proc sp_retrieve_new_requests
 --exec sp_retrieve_new_requests 'mayteh.kendall@yahoo.com', 3
@@ -563,7 +563,7 @@ as
 		where email_id = @email_id
 		order by date
 	end
-
+go
 create proc sp_retrieve_pending_requests
 --exec sp_retrieve_pending_requests 'danny.bradley34@gmail.com', 3
 @email_id varchar(max),
@@ -574,7 +574,7 @@ as
 		where requester_id = @email_id
 		order by deadline
 	end
-
+go
 create proc sp_retrieve_pending_requests_provider
 --exec sp_retrieve_pending_requests_provider 'bruce.onandonga12@gmail.com', 3
 @email_id varchar(max),
@@ -585,7 +585,7 @@ as
 		where provider_id = @email_id
 		order by deadline
 	end
-
+go
 create proc sp_retrieve_unread_messages
 --declare @hold_number_unread_messages int
 --exec sp_retrieve_unread_messages 'danny.bradley34@gmail.com','Inbox',@number_unread_messages = @hold_number_unread_messages output
@@ -609,4 +609,79 @@ as
 		and placeholder_id = @placeholder_id
 		and is_read = 0;
 	end
+	go
 
+	--Stored proc for retrieving messages for a user based on his/her placeholder selection
+create proc sp_retrieveplaceholdermessages @email_id varchar(100), 
+@placeholder_id int
+as 
+begin
+select * from Person_Message
+where email_id=@email_id and placeholder_id=@placeholder_id;
+end
+go
+
+--exec sp_retrieveplaceholdermessages 'mayteh.kendall@yahoo.com', 1;
+
+--Stored proc for showing top requests in the categories the user is interested in
+create proc sp_toprequests @email_id varchar(100)
+as
+begin
+select *
+from New_Request
+where category_id in (
+select category_id
+from Person_Category
+where email_id=@email_id);
+end
+go
+
+--exec sp_toprequests 'bruce.onandonga12@gmail.com';
+
+--Stored proc for showing top services in the categories the user is interested in
+create proc sp_topservices @email_id varchar(100)
+as
+begin
+select *
+from dbo.Service
+where category_id in (
+select category_id
+from Person_Category
+where email_id=@email_id);
+end
+go
+
+
+--exec sp_topservices 'bruce.onandonga12@gmail.com';
+
+--User defined fucntion to authenticate user login
+create function udf_authenticate
+(@email_id varchar(100),
+@password varchar(100)
+)
+returns int
+as
+begin
+return(select case when exists(select *
+from dbo.person
+where email_id=@email_id and password=HASHBYTES('SHA2_512',@password) )
+then 1
+else 0 
+end)
+end
+go
+
+--select dbo.udf_authenticate('bruce.onandonga12@gmail.com', 'sadkjg');
+
+--Stored proc for updating User Information
+create proc sp_updateUserProfile
+@email_id varchar(100), @password varchar(100), @firstname varchar(100), @lastname varchar(100)
+as
+begin 
+update dbo.Person
+set password=HASHBYTES('SHA2_512',@password), firstname=@firstname, lastname=@lastname
+where email_id=@email_id;
+end
+go
+
+--exec sp_updateUserProfile 'tony.antavius@asu.edu', 'ABCD345', 'Antavius', 'Tony';
