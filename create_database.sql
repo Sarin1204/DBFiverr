@@ -532,6 +532,8 @@ GO
 --insert into completed request table
 
 CREATE PROCEDURE sp_completed_request
+--sample execute script to move the request from pending_request to completed_request
+--EXECUTE sp_completed_request '52001416-AD96-496B-AB7C-00898A1A0541', 1
 @pending_request_id uniqueidentifier,
 @accepted_status bit
 AS
@@ -550,8 +552,61 @@ BEGIN
 	commit tran
 END
 
---sample execute script to move the request from pending_request to completed_request
---EXECUTE sp_completed_request '52001416-AD96-496B-AB7C-00898A1A0541', 1
+--Procedure for retrieving n records from new request table given email_id
+create proc sp_retrieve_new_requests
+--exec sp_retrieve_new_requests 'mayteh.kendall@yahoo.com', 3
+@email_id varchar(max),
+@num_records int
+as
+	begin
+		select Top (@num_records) title, description, days_to_complete from New_Request
+		where email_id = @email_id
+		order by date
+	end
 
+create proc sp_retrieve_pending_requests
+--exec sp_retrieve_pending_requests 'danny.bradley34@gmail.com', 3
+@email_id varchar(max),
+@num_records int
+as
+	begin
+		select Top (@num_records) provider_id, title, description, deadline from Pending_Request
+		where requester_id = @email_id
+		order by deadline
+	end
 
+create proc sp_retrieve_pending_requests_provider
+--exec sp_retrieve_pending_requests_provider 'bruce.onandonga12@gmail.com', 3
+@email_id varchar(max),
+@num_records int
+as
+	begin
+		select Top (@num_records) requester_id, title, description, deadline from Pending_Request
+		where provider_id = @email_id
+		order by deadline
+	end
+
+create proc sp_retrieve_unread_messages
+--declare @hold_number_unread_messages int
+--exec sp_retrieve_unread_messages 'danny.bradley34@gmail.com','Inbox',@number_unread_messages = @hold_number_unread_messages output
+--print @hold_number_unread_messages
+@email_id varchar(max),
+@placeholder_name varchar(max),
+@number_unread_messages int output
+
+as
+	begin
+		declare @placeholder_id int
+		set @placeholder_id = (
+			select placeholder_id 
+			from placeholder 
+			where placeholder_name = @placeholder_name
+			)
+
+		select @number_unread_messages = count(*)
+		from Person_Message
+		where email_id = @email_id
+		and placeholder_id = @placeholder_id
+		and is_read = 0;
+	end
 
