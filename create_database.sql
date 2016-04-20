@@ -611,17 +611,43 @@ as
 	end
 	go
 
-	--Stored proc for retrieving messages for a user based on his/her placeholder selection
+--Stored proc for retrieving messages for a user based on his/her placeholder selection
 create proc sp_retrieveplaceholdermessages @email_id varchar(100), 
 @placeholder_id int
 as 
 begin
-select * from Person_Message
+
+declare @thread_id uniqueidentifier;
+
+declare cr_getmaxdatefromthread cursor
+for
+select distinct thread_id from Person_Message
 where email_id=@email_id and placeholder_id=@placeholder_id;
+
+open cr_getmaxdatefromthread;
+fetch next from cr_getmaxdatefromthread into @thread_id;
+
+while @@FETCH_STATUS=0
+begin 
+
+select top 1 * from Message
+where thread_id=@thread_id 
+order by msg_date;
+
+fetch next from cr_getmaxdatefromthread into @thread_id;
+end
+
+close cr_getmaxdatefromthread;
+deallocate cr_getmaxdatefromthread;
 end
 go
 
---exec sp_retrieveplaceholdermessages 'mayteh.kendall@yahoo.com', 1;
+exec sp_retrieveplaceholdermessages 'mayteh.kendall@yahoo.com', 1;
+
+select * from dbo.Message;
+
+
+
 
 --Stored proc for showing top requests in the categories the user is interested in
 create proc sp_toprequests @email_id varchar(100)
@@ -685,3 +711,5 @@ end
 go
 
 --exec sp_updateUserProfile 'tony.antavius@asu.edu', 'ABCD345', 'Antavius', 'Tony';
+
+
