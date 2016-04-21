@@ -710,5 +710,49 @@ end
 go
 
 --exec sp_updateUserProfile 'tony.antavius@asu.edu', 'ABCD345', 'Antavius', 'Tony';
+create function udf_return_uniqueid
+--select udf_return_uniqueid('thread_id')
+(@input_uniqueid varchar(100))
+returns uniqueidentifier
+as
+begin
+declare @output_uniqueid uniqueidentifier;
+set @output_uniqueid = 
+	case when @input_uniqueid = 'thread_id'
+		then (select top 1 thread_id from message)
+		when @input_uniqueid = 'request_id'
+		then (select top 1 request_id from New_Request)
+		when @input_uniqueid = 'message_id'
+		then (select top 1 message_id from message)
+	else NULL
+end
+return @output_uniqueid
+end
+go
 
+CREATE PROCEDURE sp_reply_message_same_thread
+--declare @thread_id uniqueidentifier
+--set @thread_id = dbo.udf_return_uniqueid('thread_id')
+--exec sp_reply_message_same_thread 'mayteh.kendall@yahoo.com','john.doe@gmail.com',@thread_id, 'Hi!!','Hey, How are you doing?'
+ @author_id varchar(max),
+ @receiver_id varchar (max),
+ @thread_id uniqueidentifier,
+ @msg_subject varchar(max),
+ @body varchar(max)
+AS 
+declare @message_id uniqueidentifier
+set @message_id = NEWID()
+begin try
+	begin tran
+	INSERT INTO [dbo].[Message]([message_id],[author_id],[thread_id],[msg_subject],[body],[msg_date])
+		VALUES (@message_id,@author_id, @thread_id,@msg_subject,@body,getdate());
 
+insert into dbo.Person_Message values (@receiver_id, @message_id,1,@thread_id,0)
+
+insert into dbo.Person_Message values (@author_id, @message_id,3,@thread_id,0)
+	commit tran
+end try
+begin catch
+	print 'sp_reply_message_same_thread failed'
+end catch
+go
