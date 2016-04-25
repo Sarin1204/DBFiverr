@@ -756,3 +756,108 @@ begin catch
 	print 'sp_reply_message_same_thread failed'
 end catch
 go
+
+
+CREATE TABLE Users_Roles
+(
+UserId int identity(1,1) primary key, 
+FirstName varchar(50),
+LastName varchar(50),
+UserRole varchar(20),
+Date datetime default getdate()
+);
+GO
+
+insert into Users_Roles(FirstName,LastName, UserRole)
+values('ramya','reddy','Admin');
+insert into Users_Roles(FirstName,LastName, UserRole)
+values('sneha','reddy','TechSupport');
+GO
+
+
+
+create role TechSupport;
+GO
+
+grant update, select 
+on dbo.person 
+to TechSupport; 
+GO
+
+grant update, select 
+on dbo.new_request
+to TechSupport; 
+GO
+
+grant update, select 
+on dbo.pending_request
+to TechSupport; 
+GO
+
+grant update, select 
+on dbo.completed_request 
+to TechSupport; 
+GO
+
+grant update, select 
+on dbo.service 
+to TechSupport; 
+GO
+
+--select * from Users_Roles;
+
+
+/* user permission for admin schema*/
+DECLARE @DynamicSQL varchar(255),
+	@LoginName varchar(128),
+	@TempPassword char(8),
+	@Role varchar(20),
+	@Date datetime;
+
+DECLARE Login_Cursor CURSOR
+DYNAMIC
+FOR
+	SELECT FirstName + LastName AS LoginName, UserRole 
+	FROM Users_Roles Where datediff(hh, '2016-04-23 16:24:54.570', getdate())<25;
+
+OPEN Login_Cursor;
+FETCH NEXT FROM Login_Cursor
+	INTO @LoginName, @Role;
+WHILE @@FETCH_STATUS=0
+BEGIN
+	SET @DynamicSQL = 'Create LOGIN ' + @LoginName + ' ' + 
+		'WITH PASSWORD = ''temp'', ' + 
+		'DEFAULT_DATABASE = DBFiverr';
+	
+	EXEC (@DynamicSQL);
+	
+	SET @DynamicSQL = 'CREATE USER ' + @LoginName +' ' + 
+		'FOR LOGIN ' + @LoginName;
+		
+	EXEC (@DynamicSQL);
+	if(@Role='Admin')
+	begin
+	SET @DynamicSQL ='alter role db_owner add member '+ @LoginName;
+	EXEC (@DynamicSQL);
+	end
+	else
+	begin
+	SET @DynamicSQL = 'ALTER ROLE '+ @Role + ' ADD MEMBER '+
+		@LoginName;
+		
+	EXEC (@DynamicSQL);
+	end
+	FETCH NEXT FROM Login_Cursor
+		INTO @LoginName, @Role;
+END;
+CLOSE Login_Cursor;
+
+DEALLOCATE Login_Cursor;
+GO
+
+
+
+
+
+
+
