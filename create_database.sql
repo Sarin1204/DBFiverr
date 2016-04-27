@@ -51,10 +51,15 @@ CREATE TABLE New_Request(
 	description varchar(max),
 	date datetime DEFAULT getdate(),
 	days_to_complete int, 
-	CONSTRAINT pk_requestid PRIMARY KEY (request_id),
+	CONSTRAINT pk_requestid PRIMARY KEY nonclustered (request_id) ,
 	CONSTRAINT fk_email_request FOREIGN KEY (email_id) REFERENCES Person(email_id),
-	CONSTRAINT fk_categorgy_request FOREIGN KEY (category_id) REFERENCES Category(category_id)
+	CONSTRAINT fk_categorgy_request FOREIGN KEY (category_id) REFERENCES Category(category_id),
 	);
+GO
+
+
+create clustered index ix_clustered_new_request_date
+on dbo.new_request(date desc ) ;
 GO
 
 --creating table pending request
@@ -67,11 +72,15 @@ CREATE TABLE Pending_Request(
 	description varchar(max),
 	date datetime DEFAULT getdate(),
 	deadline datetime, 
-	CONSTRAINT pk_pending_requestid PRIMARY KEY (pending_request_id),
+	CONSTRAINT pk_pending_requestid PRIMARY KEY nonclustered(pending_request_id),
 	CONSTRAINT fk_email_requester FOREIGN KEY (requester_id) REFERENCES Person(email_id),
 	CONSTRAINT fk_email_provider FOREIGN KEY (provider_id) REFERENCES Person(email_id),
 	CONSTRAINT fk_categorgy_byrequester FOREIGN KEY (category_id) REFERENCES Category(category_id)
 	);
+GO
+
+create clustered index ix_clustered_pending_request_date
+on dbo.pending_request (date desc ) ;
 GO
 
 --creating table completed request
@@ -84,11 +93,15 @@ CREATE TABLE Completed_Request(
 	description varchar(max),
 	date datetime DEFAULT getdate(),
 	accepted bit NOT NULL, 
-	CONSTRAINT pk_completed_requestid PRIMARY KEY (completed_request_id),
+	CONSTRAINT pk_completed_requestid PRIMARY KEY nonclustered (completed_request_id),
 	CONSTRAINT fk_email_requester_complete FOREIGN KEY (requester_id) REFERENCES Person(email_id),
 	CONSTRAINT fk_email_provider_complete FOREIGN KEY (provider_id) REFERENCES Person(email_id),
 	CONSTRAINT fk_categorgy_byrequester_complete FOREIGN KEY (category_id) REFERENCES Category(category_id)
 	);
+GO
+
+create clustered index ix_clustered_completed_request_date
+on dbo.completed_request(date desc ) ;
 GO
 
 
@@ -101,10 +114,14 @@ CREATE TABLE Service(
 	title  varchar(max),
 	description varchar(max), 
 	date datetime DEFAULT getdate(),
-	CONSTRAINT pk_serviceid PRIMARY KEY (service_id),
+	CONSTRAINT pk_serviceid PRIMARY KEY nonclustered (service_id),
 	CONSTRAINT fk_service_provider_email FOREIGN KEY (email_id) REFERENCES Person(email_id),
 	CONSTRAINT fk_service_category FOREIGN KEY (category_id) REFERENCES Category(category_id)
 	);
+GO
+
+create clustered index ix_clustered_service_date
+on dbo.service(date desc ) ;
 GO
 
 --creating table message
@@ -1029,7 +1046,7 @@ GO
 
 --create proc for an automated message to be sent to the requester for a pending request upon reaching its deadline
 create proc sp_furtheraction_on_pendingrequest
-@request_id varchar(max)
+@request_id uniqueidentifier
 as
 begin
 	declare @subject_requester varchar(max);
@@ -1054,6 +1071,8 @@ begin
 end
 GO
 
+
+
 --create stored proc for populating credits into user account
 create proc sp_populate_credits
 @email_id varchar(max),
@@ -1067,6 +1086,21 @@ end
 GO
 
 --exec sp_populate_credits 'tony.antavius@asu.edu', 10;
+
+--create stored proc for the extension of deadline for a request
+create proc sp_extend_deadline
+@pending_request_id uniqueidentifier,
+@no_of_days int 
+as
+begin
+update Pending_Request
+set date=DATEADD(dd,@no_of_days, date)
+where pending_request_id=@pending_request_id;
+end
+GO
+--exec sp_extend_deadline '2DEC4EC8-1ADA-49B4-ABF5-AAA504F8D988', '5';
+
+
 
 
 
