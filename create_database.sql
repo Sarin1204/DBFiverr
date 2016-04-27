@@ -499,17 +499,21 @@ create proc sp_insert_new_request
 @email_id varchar(100), @category_id int,@title varchar(max),  @description varchar(max), @days_to_complete int
 as
 begin
-if((select (totalcredit-reservedcredit) from person where email_id=@email_id) >5)
-begin 
-insert into New_Request(email_id, category_id, title, description, days_to_complete)
-values(@email_id, @category_id,@title, @description, @days_to_complete);
-end
+	if((select (totalcredit-reservedcredit) from person where email_id=@email_id) >5)
+		begin 
+			insert into New_Request(email_id, category_id, title, description, days_to_complete)
+			values(@email_id, @category_id,@title, @description, @days_to_complete);
+
+			update Person
+			set totalcredit=totalcredit-5, reservedcredit=reservedcredit+5
+			where email_id=@email_id;
+		end
 else
-begin
-declare @body varchar(max);
-select @body=body from dbo.Automated_Message where auto_message_id=6;
-exec sp_compose_new_message_thread 'Admin@WorkNet.com',@email_id,null,'Creation of new request failed', @body;
-end
+	begin
+		declare @body varchar(max);
+		select @body=body from dbo.Automated_Message where auto_message_id=6;
+		exec sp_compose_new_message_thread 'Admin@WorkNet.com',@email_id,null,'Creation of new request failed', @body;
+	end
 end
 GO
 --exec sp_insert_new_request 'danny.bradley34@gmail.com', 1, 'Help', 'I want something', 5;
@@ -978,6 +982,18 @@ if (select accepted from inserted)=1
 		set @body_for_requester=@body_for_requester+ (select firstname+lastname from dbo.Person where email_id=@provider_email_id);
 		set @subject_for_requester='Credits are getting transferred from your account for the request with title as '+ @title;
 		exec sp_compose_new_message_thread 'Admin@WorkNet.com',@requester_email_id,null,@subject_for_requester, @body_for_requester;
+
+		update person 
+		set totalcredit=0.5
+		where email_id='Admin@WorkNet.com';
+
+		update person 
+		set reservedcredit=reservedcredit-5
+		where email_id=@requester_email_id;
+
+		update person 
+		set totalcredit=totalcredit+5
+		where email_id=@provider_email_id;
 	end
 else
 	begin
@@ -1037,6 +1053,23 @@ begin
 	exec sp_compose_new_message_thread 'Admin@WorkNet.com',@serviceprovider_email_id,null,@subject_provider, @body_provider;
 end
 GO
+
+--create stored proc for populating credits into user account
+create proc sp_populate_credits
+@email_id varchar(max),
+@number_of_credits money
+as
+begin
+update person
+set totalcredit=@number_of_credits
+where email_id=@email_id;
+end
+GO
+
+--exec sp_populate_credits 'tony.antavius@asu.edu', 10;
+
+
+
 
 
 
