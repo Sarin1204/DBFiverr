@@ -158,6 +158,7 @@ CREATE TABLE Automated_Message(
 );
 GO
 
+
 --Insert records into Person table
 INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('john.doe@gmail.com', HASHBYTES('SHA2_512', 'vfdwes'), N'John',N'Doe');
 INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('michelle.davison@gmail.com', HASHBYTES('SHA2_512', 'adsvc'), N'Michelle',N'Davison');
@@ -169,6 +170,7 @@ INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('reynaldo.
 INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('ger.sullivan@asu.edu', HASHBYTES('SHA2_512', 'sgfdhgft'), N'Sullivan',N'Geraldine');
 INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('nicole.reh123@gmail.com', HASHBYTES('SHA2_512', 'ssfsfawqq'), N'Nicole',N'Rehdahl');
 INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('katy.smith@yahoo.com', HASHBYTES('SHA2_512', 'bgfbrtsf'), N'Katy',N'Smith');
+INSERT [dbo].Person (email_id, password, firstname, lastname) VALUES ('Admin@WorkNet.com', HASHBYTES('SHA2_512', 'admin'), N'Admin',N'WorkNet');
 
 --Insert sample categories for services
 INSERT [dbo].Category (category_id, category_name) VALUES (1, 'Graphics & Design');
@@ -426,13 +428,16 @@ insert into dbo.Person_Message values (@author_id, @message_id,3,@thread_id,0)
 end try
 begin catch
 	print 'sp_compose_new_message_thread failed'
+	SELECT ERROR_MESSAGE() AS ErrorMessage; 
 end catch
 go
+
+--drop proc sp_compose_new_message_thread;
 --insert messages for automated message table
 INSERT INTO Automated_Message (body)
 VAlUES ('You have successfully registered on WorkNet. Take the experience of outsourcing and freelancing together. Happy working!');--subject ('Welcome' +@firstname, @lastname)
 INSERT INTO Automated_Message (body)
-VAlUES ('You have a new service provider requesting to serve your request.');--subject('action required for request' + @title)
+VAlUES ('You have a new service provider requesting to serve your request having title as ');--subject('action required for request' + @title)
 INSERT INTO Automated_Message (body)
 VAlUES ('Your request has reached deadline. Kindly review the work and take action.'); --subject ('Request' +@title +'has reached deadline)
 INSERT INTO Automated_Message (body)
@@ -441,6 +446,10 @@ INSERT INTO Automated_Message (body)
 VALUES ('The requester did not like your work. You will receive credits once the legal department verifies the request');--subject('Credits on hold for request' + @title)
 INSERT INTO Automated_Message (body)
 VAlUES ('You donot have enough credits to post the request. Please purchase more credits to to be able to post a new request');--subject('Not enough credits for posting new request')
+INSERT INTO Automated_Message (body)
+VAlUES ('You have accepted the work. Credits from your account would be transferred to');
+INSERT INTO Automated_Message (body)
+VAlUES ('Please wait for the further instructions on the request with the title ');
 --SQL Scripts
 --INSERT INTO SERVICE
 GO
@@ -552,6 +561,7 @@ BEGIN
 	commit tran
 END
 go
+
 --Procedure for retrieving n records from new request table given email_id
 create proc sp_retrieve_new_requests
 --exec sp_retrieve_new_requests 'mayteh.kendall@yahoo.com', 3
@@ -771,14 +781,22 @@ GO
 insert into Users_Roles(FirstName,LastName, UserRole)
 values('ramya','reddy','Admin');
 insert into Users_Roles(FirstName,LastName, UserRole)
-values('sneha','reddy','TechSupport');
+values('nupur','bhargava','TechSupport');
+insert into Users_Roles(FirstName,LastName, UserRole)
+values('vipul', 'sarin', 'Analyst');
+--insert into Users_Roles(FirstName,LastName, UserRole)
+--values('shravya', 'reddy', 'Developer');
+
 GO
 
 
 
+
+--create techsupport role
 create role TechSupport;
 GO
 
+--granting permissions to the role
 grant update, select 
 on dbo.person 
 to TechSupport; 
@@ -807,6 +825,67 @@ GO
 --select * from Users_Roles;
 
 
+
+/*create views for analysts*/
+--to study the current market trends
+CREATE VIEW vw_CurrentTrends
+AS
+SELECT category_name as [Category in Demand], COUNT(request_id) as [No. Of Requests] from Category
+JOIN New_Request 
+on New_Request.category_id = Category.category_id
+group by New_Request.category_id, category_name
+
+GO
+
+--create view for analysing how many completed requests are getting accepted categiry wise
+create view vw_acceptanceRatePerCategory
+as
+select category_name, (select COUNT(*)
+from Completed_Request
+where completed_request.category_id=Category.category_id) as total_count, 
+(select COUNT(*)
+from Completed_Request
+where completed_request.category_id=Category.category_id and accepted=1) as accepted_count
+from Category
+Go
+
+--select * from vw_acceptanceRatePerCategory;
+
+--Create view to get number of services and number of requests per category
+Create View vw_ServiceVsRequest
+AS
+(
+select c.category_name, (SELECT Count(email_id) from Service where Service.category_id = c.category_id) as [No. of service providers],
+(SELECT count(request_Id) from New_request where New_Request.category_id = c.category_id) as [No. Of Requests] 
+FROM Category c
+group by  c.category_name, c.category_Id
+)
+Go
+
+--create Analyst role
+create role Analyst;
+
+--added permissions to the role
+grant select 
+on vw_CurrentTrends
+to Analyst;
+go
+
+grant select 
+on vw_acceptanceRatePerCategory
+to Analyst;
+go
+
+grant select 
+on vw_ServiceVsRequest
+to Analyst;
+go
+
+--select * from users_roles;
+
+
+
+
 /* user permission for admin schema*/
 DECLARE @DynamicSQL varchar(255),
 	@LoginName varchar(128),
@@ -817,43 +896,187 @@ DECLARE @DynamicSQL varchar(255),
 DECLARE Login_Cursor CURSOR
 DYNAMIC
 FOR
-	SELECT FirstName + LastName AS LoginName, UserRole 
-	FROM Users_Roles Where datediff(hh, '2016-04-23 16:24:54.570', getdate())<25;
+	SELECT FirstName + LastName AS LoginName, UserRole, Date 
+	FROM Users_Roles Where datediff(hh, Date, getdate())<25;
 
 OPEN Login_Cursor;
 FETCH NEXT FROM Login_Cursor
-	INTO @LoginName, @Role;
+	INTO @LoginName, @Role, @Date;
 WHILE @@FETCH_STATUS=0
 BEGIN
 	SET @DynamicSQL = 'Create LOGIN ' + @LoginName + ' ' + 
 		'WITH PASSWORD = ''temp'', ' + 
 		'DEFAULT_DATABASE = DBFiverr';
-	
+	--print(@DynamicSQL);
 	EXEC (@DynamicSQL);
 	
 	SET @DynamicSQL = 'CREATE USER ' + @LoginName +' ' + 
 		'FOR LOGIN ' + @LoginName;
-		
+		--print(@DynamicSQL);
 	EXEC (@DynamicSQL);
 	if(@Role='Admin')
 	begin
 	SET @DynamicSQL ='alter role db_owner add member '+ @LoginName;
+	--print(@DynamicSQL);
 	EXEC (@DynamicSQL);
 	end
 	else
 	begin
 	SET @DynamicSQL = 'ALTER ROLE '+ @Role + ' ADD MEMBER '+
 		@LoginName;
-		
+	--print(@DynamicSQL);	
 	EXEC (@DynamicSQL);
 	end
 	FETCH NEXT FROM Login_Cursor
-		INTO @LoginName, @Role;
+		INTO @LoginName, @Role, @Date;
 END;
 CLOSE Login_Cursor;
 
 DEALLOCATE Login_Cursor;
 GO
+
+--create trigger for automated message as soon as a person gets registered.
+
+create trigger tr_person_registration on dbo.person
+after insert
+as 
+declare @body varchar(max);
+declare @email_id varchar(max);
+declare @firstname varchar(max);
+declare @lastname varchar(max);
+declare @body_message varchar(max);
+select @body=body from dbo.Automated_Message where auto_message_id=1;
+select @email_id=email_id, @firstname=firstname, @lastname=lastname from inserted;
+set @body_message='Dear '+ @firstname+' ' +@lastname+', '+@body;
+exec sp_compose_new_message_thread 'Admin@WorkNet.com',@email_id,null,'Welcome to WorkNet!', @body_message;
+GO
+
+
+
+--create trigger for insertion into completed request-to notify service provider if their service has been accepted
+
+create trigger tr_credit_transfer on dbo.completed_request
+after insert
+as
+declare @body_for_serviceprovider varchar(max);
+declare @body_for_requester varchar(max);
+declare @provider_email_id varchar(max);
+declare @requester_email_id varchar(max);
+declare @title varchar(max);
+declare @subject_for_serviceprovider varchar(max);
+declare @subject_for_requester varchar(max);
+
+select @provider_email_id=provider_id, @requester_email_id=requester_id,  @title=title from inserted;
+
+if (select accepted from inserted)=1
+	begin
+		select @body_for_serviceprovider=body from dbo.Automated_Message where auto_message_id=4;
+		set @subject_for_serviceprovider='Credits are getting transferred to your account for the request with title as '+ @title;
+		exec sp_compose_new_message_thread 'Admin@WorkNet.com',@provider_email_id,null,@subject_for_serviceprovider, @body_for_serviceprovider;
+
+		select @body_for_requester=body from dbo.Automated_Message where auto_message_id=7;
+		set @body_for_requester=@body_for_requester+ (select firstname+lastname from dbo.Person where email_id=@provider_email_id);
+		set @subject_for_requester='Credits are getting transferred from your account for the request with title as '+ @title;
+		exec sp_compose_new_message_thread 'Admin@WorkNet.com',@requester_email_id,null,@subject_for_requester, @body_for_requester;
+	end
+else
+	begin
+		select @body_for_serviceprovider=body from dbo.Automated_Message where auto_message_id=5;
+		set @subject_for_serviceprovider='Credits on hold for the request with title as '+ @title;
+		exec sp_compose_new_message_thread 'Admin@WorkNet.com',@provider_email_id,null,@subject_for_serviceprovider, @body_for_serviceprovider;
+	end
+
+GO
+
+
+	
+--create stored proc for an automated message containing request_id to be sent to the requestors inbox on click of an apply button by the service provider
+create proc sp_serve_my_request
+@service_provider_email_id varchar(max),
+@request_id uniqueidentifier
+as
+begin
+declare @requester_email_id varchar(max);
+declare @title_of_request varchar(max);
+declare @subject varchar(max);
+declare @body varchar(max);
+select @requester_email_id=email_id, @title_of_request=title from New_Request where request_id=@request_id;
+set @subject='Action required for the request having title as '+ @title_of_request;
+select @body=body from Automated_Message where auto_message_id=2;
+set @body=@body + @title_of_request;
+exec sp_compose_new_message_thread @service_provider_email_id,@requester_email_id,@request_id,@subject, @body;
+end
+GO
+
+
+
+
+--create proc for an automated message to be sent to the requester for a pending request upon reaching its deadline
+create proc sp_furtheraction_on_pendingrequest
+@request_id varchar(max)
+as
+begin
+	declare @subject_requester varchar(max);
+	declare @body_requester varchar(max);
+	declare @subject_provider varchar(max);
+	declare @body_provider varchar(max);
+	declare @requester_email_id varchar(max);
+	declare @serviceprovider_email_id varchar(max);
+	declare @title varchar(max);
+
+	select @requester_email_id=requester_id, @serviceprovider_email_id=provider_id,@title=title	from pending_request
+	where pending_request_id=@request_id;
+
+	select @body_requester=body from Automated_Message where auto_message_id=3;
+	set @subject_requester='Please take further action on the request with title '+@title
+	exec sp_compose_new_message_thread 'Admin@WorkNet.com',@requester_email_id,null,@subject_requester, @body_requester;
+
+	select @body_provider=body from Automated_Message where auto_message_id=8;
+	set @subject_requester='Deadline for the has been reached for the request with the title '+@title;
+	set @body_provider=@body_provider+@title;
+	exec sp_compose_new_message_thread 'Admin@WorkNet.com',@serviceprovider_email_id,null,@subject_provider, @body_provider;
+end
+GO
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
