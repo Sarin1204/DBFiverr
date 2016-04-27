@@ -1,0 +1,152 @@
+<!-- Top menu -->
+<link rel="stylesheet" href="assets/css/form-elements.css">
+<nav class="navbar navbar-css navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navbar-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://www.childrenscancernetwork.org/"><img src="/img/logo.png" style="height:66px"></a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="top-navbar-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+							<span class="li-text">
+								Connect with us
+							</span>
+							<span class="li-social">
+								<a href="https://www.facebook.com/pages/Childrens-Cancer-Network/128082398431"><i class="fa fa-facebook"></i></a>
+								<a href="https://twitter.com/ccngold"><i class="fa fa-twitter"></i></a>
+								<a href="http://www.youtube.com/channel/UCzIYUSSziLAfnN19wSzYqGw"><i class="fa fa-youtube"></i></a>
+							</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="top-content">
+    <div class="inner-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-top">
+                        <div class="form-top-left">
+                            <h3>Sign in</h3>
+                            <p>Sign in, or click on the social network links to get started:</p>
+                        </div>
+                        <div class="form-top-right">
+                            <i class="fa fa-sign-in"></i>
+                        </div>
+                    </div>
+                    <div class="form-bottom col-md-12">
+                        <div>
+                            <div>
+                                <div class="col-md-offset-4">
+                                    <a id="social-facebook" class="btn btn-primary social-login-btn social-facebook" href="/oauth/facebook"><i class="fa fa-facebook"></i></a>
+                                    <a id="social-twitter" class="btn btn-primary social-login-btn social-twitter" href="/oauth/twitter"><i class="fa fa-twitter"></i></a>
+                                </div>
+                                <div class="col-md-offset-4">
+                                    <a id="social-linkedin" class="btn btn-primary social-login-btn social-linkedin" href="/auth/linkedin"><i class="fa fa-linkedin"></i></a>
+                                    <a id="social-google" class="btn btn-primary social-login-btn social-google" href="/oauth/google"><i class="fa fa-google-plus"></i></a>
+                                </div>
+
+                            </div>
+                            <br>
+                            <div ng-controller="SigninPersonController">
+                                <form role="form" data-ng-submit="signin_person()"  class="registration-form">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <div>
+                                            <input type="email" data-ng-model="email" id="email" class="form-control" placeholder="email" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <div>
+                                            <input type="password" data-ng-model="password" id="password" class="form-control" placeholder="password" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div ng-show="showMessage" class="{{signin_error.type}} fadein fadeout">{{signin_error.msg}}</div>
+                                    </div>
+                                    <div class="form-group col-md-offset-5">
+                                        <button class="btn btn-lg" type="submit" >Sign me in</button>
+                                    </div>
+
+                                    <br>
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-top">
+                        <div class="form-top-left">
+                            <h3>Sign up now</h3>
+                            <p>Fill in the form below to get instant access:</p>
+                        </div>
+                        <div class="form-top-right">
+                            <i class="fa fa-pencil"></i>
+                        </div>
+                    </div>
+                    <div class="form-bottom" ng-controller="SignupPersonController" style="max-height:410px; overflow:auto">
+
+                        <form role="form" data-ng-submit="create_person()" class="registration-form">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <div>
+                                    <input type="email" data-ng-model="email" id="email" class="form-control" placeholder="email" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div>
+                                    <input type="password" data-ng-model="password" id="password" class="form-control" placeholder="password" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="firstname">Firstname</label>
+                                <div>
+                                    <input type="text" data-ng-model="firstname" id="firstname" class="form-control" placeholder="firstname" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Lastname</label>
+                                <div>
+                                    <input type="text" data-ng-model="lastname" id="lastname" class="form-control" placeholder="lastname" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <div>
+                                    <input type="text" data-ng-model="gender" id="gender" class="form-control" placeholder="gender" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <div>
+                                    <input type="phone" data-ng-model="phone" id="phone" class="form-control" placeholder="phone">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-offset-5">
+                                <button type="submit" class="btn">Sign me up!</button>
+                            </div>
+                            <div data-ng-show="error">
+                                <strong data-ng-bind="error"></strong>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
