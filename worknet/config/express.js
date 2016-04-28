@@ -37,6 +37,7 @@ module.exports = function () {
     require('../app/routes/index.server.route.js').home(app);
     require('../app/routes/signup.server.route.js')(app);
     require('../app/routes/signinPerson.server.route')(app);
+    require('../app/routes/dashboard.server.route')(app);
     /*require('../app/routes/signupChild.server.route.js')(app);
     require('../app/routes/signinParent.server.route.js')(app);
     require('../app/routes/findFriend.server.route.js')(app);

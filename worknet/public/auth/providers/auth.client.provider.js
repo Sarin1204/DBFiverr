@@ -9,6 +9,7 @@ angular.module('auth').provider('Auth', [
             // Make an AJAX call to check if the user is logged in
             $http.get('/signedin').success(function(user){
                 // Authenticated
+                console.log("user == "+JSON.stringify(user));
                 if (user !== '0') {
                     if ($window.user === undefined) {
                         $window.user = user;

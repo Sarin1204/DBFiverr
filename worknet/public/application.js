@@ -3,7 +3,7 @@
  */
 var mainApplicationModuleName = 'worknet';
 var mainApplicationModule = angular.module(mainApplicationModuleName, ['ngResource','ngRoute','ngTagsInput','ngAnimate','ui.bootstrap',
-    'auth','home','signupPerson','signinPerson']);
+    'auth','home','getUser','signupPerson','signinPerson','dashboard']);
 
 mainApplicationModule.config(['$locationProvider','$httpProvider',
     function($locationProvider,$httpProvider){
