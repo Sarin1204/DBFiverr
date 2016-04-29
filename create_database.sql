@@ -685,11 +685,13 @@ go
 
 
 
+
+
 --Stored proc for showing top requests in the categories the user is interested in
 create proc sp_toprequests @email_id varchar(100)
 as
 begin
-select *
+select request_id, email_id, category_id, title, description, convert(date, date), days_to_complete
 from New_Request
 where category_id in (
 select category_id
@@ -704,7 +706,7 @@ go
 create proc sp_topservices @email_id varchar(100)
 as
 begin
-select *
+select service_id, email_id, category_id, title, description, CONVERT(date, date)
 from dbo.Service
 where category_id in (
 select category_id
@@ -1005,7 +1007,8 @@ if (select accepted from inserted)=1
 		set @body_for_requester=@body_for_requester+ (select firstname+lastname from dbo.Person where email_id=@provider_email_id);
 		set @subject_for_requester='Credits are getting transferred from your account for the request with title as '+ @title;
 		exec sp_compose_new_message_thread 'Admin@WorkNet.com',@requester_email_id,null,@subject_for_requester, @body_for_requester;
-
+		
+		begin tran 
 		update person 
 		set totalcredit=0.5
 		where email_id='Admin@WorkNet.com';
@@ -1017,6 +1020,7 @@ if (select accepted from inserted)=1
 		update person 
 		set totalcredit=totalcredit+5
 		where email_id=@provider_email_id;
+		commit tran
 	end
 else
 	begin
