@@ -4,7 +4,8 @@
 angular.module('dashboard').factory('Dashboard',['$resource',
     function($resource) {
         return {
-            getTopRequests:  $resource('/api/getTopRequests')
+            getTopRequests:  $resource('/api/getTopRequests'),
+            getTopServices: $resource('/api/getTopServices')
         };
     }
 ]);
