@@ -26,6 +26,15 @@ module.exports = function () {
     app.use(bodyParser.json());
     app.use(methodOverride());
 
+    app.use(session({
+        saveUninitialized: true,
+        resave: true,
+        secret: config.sessionSecret
+    }));
+
+    app.use(flash());
+    app.use(passport.initialize());
+    app.use(passport.session());
 
     app.set('views', './app/views');
     app.set('view engine', 'ejs');
