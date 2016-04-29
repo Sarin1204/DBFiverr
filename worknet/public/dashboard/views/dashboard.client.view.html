@@ -62,6 +62,12 @@
                                     <div>{{topRequest.body}}</div>
                                 </div>
                             </div>
+                            <div ng-controller="CategoryController">
+                                <div data-ng-repeat="category in category" class="panel-card panel panel-default">
+                                    <div>{{category.title}}</div>
+                                    <div>{{category.body}}</div>
+                                </div>
+                            </div>
 
                         </div>
 
