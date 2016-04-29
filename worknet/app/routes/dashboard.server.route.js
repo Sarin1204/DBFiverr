@@ -8,5 +8,8 @@ module.exports = function(app){
     app.route('/api/getTopRequests')
         .get(dashboard.getTopRequests);
 
+    app.route('/api/getTopServices')
+        .get(dashboard.getTopServices);
+
 
 }

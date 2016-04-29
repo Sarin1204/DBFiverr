@@ -1,0 +1,80 @@
+<!-- Top menu -->
+<link rel="stylesheet" href="assets/css/form-elements.css">
+<nav class="navbar navbar-css navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navbar-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://www.worknet.org/"><img src="/img/logo.png" style="height:66px"></a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="top-navbar-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+							<span class="li-text">
+								Connect with us
+							</span>
+							<span class="li-social">
+								<a href="https://www.facebook.com/pages/Childrens-Cancer-Network/128082398431"><i class="fa fa-facebook"></i></a>
+								<a href="https://twitter.com/ccngold"><i class="fa fa-twitter"></i></a>
+								<a href="http://www.youtube.com/channel/UCzIYUSSziLAfnN19wSzYqGw"><i class="fa fa-youtube"></i></a>
+							</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <a href="http://localhost:3000/#!/dashboard"> home</a>
+</div>
+<div class="inner-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel-card panel panel-default">
+                    <div class="panel-heading">New Service</div>
+                    <div class="panel-body">
+                        <div style="display: block; margin-left:10em;">
+                            <div class="form-bottom col-md-12" ng-controller="NewServiceController" style="background-color: transparent">
+                                <form role="form" data-ng-submit="submit_service()" class="registration-form">
+                                    <div class="form-group" style="max-width: 90%;">
+                                        <label for="title">What are you offering?</label>
+                                        <div>
+                                            <input type="text" data-ng-model="title" id="title" class="form-control" placeholder="eg. I will print canvas images." required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="max-width: 90%;">
+                                        <label for="description">Describe your offering briefly</label>
+                                        <div>
+                                            <textarea type="text" data-ng-model="description" id="description" class="form-control"
+                                                      rows= "5"
+                                                      columns="15"
+                                                      placeholder="Describe your skills" required></textarea></br>
+                                        </div>
+                                    </div>
+                                    <div ng-controller="CategoryController">
+                                        <div class="form-group" style="max-width: 90%;">
+                                            <label for="cat">Select Category:</label>
+                                            <select data-ng-model="param" class = "form-control" id="param" type="button">
+                                            <option data-ng-model="param" data-ng-repeat="cat in category">{{cat.category_name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-offset-4">
+                                        <button type="submit" class="btn">Submit My Service!</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

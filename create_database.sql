@@ -470,23 +470,15 @@ VAlUES ('Please wait for the further instructions on the request with the title 
 --SQL Scripts
 --INSERT INTO SERVICE
 GO
-
 CREATE PROCEDURE sp_service
 @email_service varchar(100),
-@category_name varchar(max),
+@category int,
 @title varchar(max),
 @description varchar(max)
 AS
-	declare @category int;
-
-	select @category=category_id
-	from Category
-	where category_name=@category_name;
-
 	INSERT INTO Service ([dbo].email_id, [dbo].category_id, [dbo].title, [dbo].description)
 	VAlUES (@email_service, @category, @title, @description)
 GO
-
 
 --sample execute script to insert into service
 --EXECUTE sp_service 'bruce.onandonga12@gmail.com', 1,'I will photoshop any image', 'Hi, you will receive 1024*1024 / 512*512(or desired size) png with transparent background'
@@ -518,19 +510,14 @@ GO
 --exec sp_insert_person 'Admin@WorkNet.com','asdfgh','Admin','WorkNet';
 
 
+
 --Stored proc for inserting data into New_request table
 create proc sp_insert_new_request
-@email_id varchar(100), @category_name varchar(max),@title varchar(max),  @description varchar(max), @days_to_complete int
+@email_id varchar(100), @category_id int,@title varchar(max),  @description varchar(max), @days_to_complete int
 as
 begin
-
-declare @category_id int;
 	if((select (totalcredit-reservedcredit) from person where email_id=@email_id) >5)
 		begin 
-			select @category_id=category_id
-			from Category
-			where category_name=@category_name;
-
 			insert into New_Request(email_id, category_id, title, description, days_to_complete)
 			values(@email_id, @category_id,@title, @description, @days_to_complete);
 
