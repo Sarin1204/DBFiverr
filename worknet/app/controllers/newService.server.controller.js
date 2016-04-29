@@ -4,24 +4,18 @@
 
 var sequelize = require("../../config/sequelize").getSequelize;
 
-exports.getTopRequests = function(req, res, next) {
-    console.log('inside new service server controller')
-    if (!req.user) {
-        var  email = "john.doe@gmail.com"
-        //var email = req.email_id
-        var title=req.title
-        var category=req.category
-        var description=req.description
+exports.getTopServices = function(req, res, next) {
+    console.log('inside getTopRequests controller'+JSON.stringify(req.user[0]))
+    user = req.user[0];
+    //var  email = "john.doe@gmail.com"
+    var email = user.email_id
 
-        // var query = "exec dbo.sp_insert_person 'vipul.sarin@google.com','abcde','Vipul','Sarin'"
-       /** var query = "exec dbo.sp_service :email, category, title, description";
-        sequelize.query(query, { replacements: {email: email, category: category, title: title, description: description}, type: sequelize.QueryTypes.SELECT})
-            .then(function(new_services) {
-                console.log(JSON.stringify("exec dbo.sp_service successful"+JSON.stringify(new_services)));
-                return res.json({"new_services":new_services});
-            })
-
-    } else {
-        return res.status(500).send({ error: 'exec dbo.sp_service did not work'+err });
-    }..*/
+    // var query = "exec dbo.sp_insert_person 'vipul.sarin@google.com','abcde','Vipul','Sarin'"
+    var query = "exec dbo.sp_toprequests :email";
+    sequelize.query(query, { replacements: {email: email }, type: sequelize.QueryTypes.SELECT})
+        .then(function(new_requests,error) {
+            console.log(JSON.stringify("exec dbo.sp_toprequests successful"+JSON.stringify(new_requests)));
+            return res.json({"new_requests":new_requests});
+            console.log("error is "+JSON.stringify(error))
+        })
 };
