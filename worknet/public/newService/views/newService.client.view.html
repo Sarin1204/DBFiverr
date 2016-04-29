@@ -31,26 +31,50 @@
 <div>
     <a href="http://localhost:3000/#!/dashboard"> home</a>
 </div>
-<form style="display: block; margin-left:30em;">
-    <div class="form-group" style="max-width: 70%;">
-        <label for="serviceTitle">What are you offering?</label>
-        <div>
-            <input type="text" id="service" class="form-control" placeholder="eg. I will print canvas images." required>
+<div class="inner-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel-card panel panel-default">
+                    <div class="panel-heading">New Service</div>
+                    <div class="panel-body">
+                        <form style="display: block; margin-left:10em;">
+                            <div class="form-bottom col-md-12" ng-controller="NewServiceController" style="background-color: transparent">
+                                <form role="form" data-ng-submit="submitService" class="registration-form">
+                                    <div class="form-group" style="max-width: 90%;">
+                                        <label for="serviceTitle">What are you offering?</label>
+                                        <div>
+                                            <input type="text" id="service" class="form-control" placeholder="eg. I will print canvas images." required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="max-width: 90%;">
+                                        <label for="Description">Describe your offering briefly</label>
+                                        <div>
+                                            <textarea type="text" class="form-control"
+                                                      rows= "5"
+                                                      columns="15"
+                                                      placeholder="Describe your skills" required></textarea></br>
+                                        </div>
+                                    </div>
+                                    <div ng-controller="CategoryController">
+                                        <div class="form-group" style="max-width: 90%;">
+                                            <label for="cat">Select Category:</label>
+                                            <select class = "form-control" id="cat" type="button">
+                                            <option data-ng-repeat="cat in category">{{cat.category_name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-offset-4">
+                                        <button type="submit" class="btn">Submit My Service!</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="form-group" style="max-width: 70%;">
-        <label for="Description">Describe your offering briefly</label>
-        <div>
-            <textarea type="text" class="form-control"
-            rows= "10"
-            columns="10"
-            placeholder="Describe your skills" required></textarea></br>
-        </div>
-    </div>
-    <div class="form-group col-md-offset-3">
-        <button type="submit" class="btn">Submit My Service!</button>
-    </div>
+</div>
 
-
-</form>
 

@@ -14,7 +14,7 @@ exports.getTopRequests = function(req, res, next) {
         var description=req.description
 
         // var query = "exec dbo.sp_insert_person 'vipul.sarin@google.com','abcde','Vipul','Sarin'"
-        var query = "exec dbo.sp_service :email, category, title, description";
+       /** var query = "exec dbo.sp_service :email, category, title, description";
         sequelize.query(query, { replacements: {email: email, category: category, title: title, description: description}, type: sequelize.QueryTypes.SELECT})
             .then(function(new_services) {
                 console.log(JSON.stringify("exec dbo.sp_service successful"+JSON.stringify(new_services)));
@@ -23,5 +23,5 @@ exports.getTopRequests = function(req, res, next) {
 
     } else {
         return res.status(500).send({ error: 'exec dbo.sp_service did not work'+err });
-    }
+    }..*/
 };

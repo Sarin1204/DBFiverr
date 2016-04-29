@@ -7,10 +7,8 @@
 
 var sequelize = require("../../config/sequelize").getSequelize;
 
-exports.all_category = function(req, res, next) {
+exports.getCategory = function(req, res, next) {
     console.log('inside server controller category')
-    if (!req.category) {
-
         // var query = "exec dbo.sp_insert_person 'vipul.sarin@google.com','abcde','Vipul','Sarin'"
         var query = "SELECT category_name FROM dbo.Category";
         sequelize.query(query, {type: sequelize.QueryTypes.SELECT})
@@ -19,8 +17,4 @@ exports.all_category = function(req, res, next) {
 
                 return res.json({"all_category":all_category});
             })
-
-    } else {
-        return res.status(500).send({ error: 'retrieve category select query did not work'+err });
-    }
 };
