@@ -4,7 +4,7 @@
 angular.module('newService').factory('NewService',['$resource',
     function($resource) {
         return {
-            getTopServices:  $resource('/api/getTopServices')
+            submitService:  $resource('api/submitService')
         };
     }
 ]);

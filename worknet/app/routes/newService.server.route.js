@@ -5,8 +5,8 @@ var newService = require('../controllers/newService.server.controller');
 
 module.exports = function(app){
 
-    app.route('/api/getTopServices')
-        .get(newService.getTopServices);
+    app.route('/api/submitService')
+        .post(newService.submitService);
 
 
 }
