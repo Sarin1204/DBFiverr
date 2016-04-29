@@ -16,7 +16,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="http://localhost:3000/#!/dashboard"><img src="/img/logo.png" style="height:66px"></a>
+            <a href="http://localhost:3000/#!/dashboard"><img src="/img/worknetlogo.png" style="height:66px"></a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="top-navbar-1">
@@ -44,10 +44,10 @@
                     </ol>
                 </div>
                 <div class="panel-card panel panel-default">
-                    <div class="panel heading">Create new request</div>
+                   <!-- <div class="panel heading">Create new request</div>-->
                     <div class="panel-body">
-                        <div class="form-bottom col-md-12" style="background-color: transparent ">
-                            <form role="form" data-ng-submit="submit_newrequest()"  class="registration-form">
+                        <div class="form-bottom col-md-12" ng-controller="NewRequestController" style="background-color: transparent ">
+                            <form role="form" data-ng-submit="insert_newrequest()"  class="registration-form">
                                 <br class="form-group">
                                 <div class="row row-content">
                                     <div class="col-xs-12 col-sm-3">
@@ -79,11 +79,23 @@
                                     <div>
                                         <p style="padding:20px;"></p></div>
                                 </div>
+
+                                <div ng-controller="CategoryController">
+                                        <div class="form-group" style="max-width: 90%;">
+                                            <label for="cat">Select Category:</label>
+                                            <select class="form-control" id="cat" type="button">
+                                                <option data-ng-repeat="cat in category">{{cat.category_name}}</option>
+                                            </select>
+                                        </div>
+                                </div>
+
+
                                 <div class="form-group col-md-offset-5">
                                     <div class="col-xs-12">
                                         <button class="btn btn-lg" type="submit" style="background-color: #204d74; " >Submit my request</button>
                                     </div>
                                 </div>
+                                </form>
 
                         </div>
                     </div>
