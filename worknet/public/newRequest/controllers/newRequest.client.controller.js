@@ -5,14 +5,22 @@
 angular.module('newRequest').controller('NewRequestController',['$scope',
     '$routeParams', '$location','NewRequest','getUser',
     function($scope, $routeParams, $location, NewRequest,getUser){
-        console.log("getUser"+JSON.stringify(getUser.user))
-        NewRequest.getNewRequests.get({email_id: getUser.email_id},function(response){
-            console.log('new requests are '+JSON.stringify(response));
-            $scope.newRequests = response.new_requests;
-        }, function(error){
-            console.log('Inside error for topRequests');
-            $scope.errorMsg = 'Oops! Something unexpected occured!'
-        });
+        $scope.insert_newrequest = function(){
+            console.log('Inside creating new request');
+            var newrequest = new NewRequest.newRequest({
+                title: this.title,
+                description: this.description,
+                days_to_complete: this.daystocomplete
+            });
+
+            newrequest.$save(function(response){
+                /*$window.location.href='http://localhost:3000/api/checkchild';*/
+                $location.path('/dashboard')
+            }, function(errorResponse){
+                console.log('error'+JSON.stringify(errorResponse));
+                $scope.error = errorResponse.data.message;
+            });
+        };
 
     }
 ]);
