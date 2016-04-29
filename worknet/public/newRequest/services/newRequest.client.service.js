@@ -5,7 +5,7 @@
 angular.module('newRequest').factory('NewRequest',['$resource',
     function($resource) {
         return {
-            getNewRequests:  $resource('/api/getNewRequests')
+            newRequest:  $resource('api/insertnewrequest')
         };
     }
 ]);

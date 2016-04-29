@@ -49,6 +49,7 @@ module.exports = function () {
     require('../app/routes/dashboard.server.route')(app);
     require('../app/routes/category.server.route')(app);
     require('../app/routes/newService.server.route')(app);
+    require('../app/routes/newRequest.server.route')(app);
     //require('../app/routes/submitService.server.route')(app);
     /*require('../app/routes/signupChild.server.route.js')(app);
     require('../app/routes/signinParent.server.route.js')(app);
