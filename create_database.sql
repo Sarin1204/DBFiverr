@@ -470,15 +470,21 @@ VAlUES ('Please wait for the further instructions on the request with the title 
 --SQL Scripts
 --INSERT INTO SERVICE
 GO
-CREATE PROCEDURE sp_service
+create PROCEDURE sp_service
 @email_service varchar(100),
-@category int,
+@category_name nvarchar(max),
 @title varchar(max),
 @description varchar(max)
 AS
+	declare @category int;
+	select @category=category_id
+	from Category
+	where category_name=@category_name;
+	set @category = 1;
 	INSERT INTO Service ([dbo].email_id, [dbo].category_id, [dbo].title, [dbo].description)
 	VAlUES (@email_service, @category, @title, @description)
 GO
+
 
 --sample execute script to insert into service
 --EXECUTE sp_service 'bruce.onandonga12@gmail.com', 1,'I will photoshop any image', 'Hi, you will receive 1024*1024 / 512*512(or desired size) png with transparent background'

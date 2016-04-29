@@ -13,8 +13,10 @@ exports.getTopServices = function(req, res, next) {
             description = req.body.description,
             category = req.body.category;
 
+
+
     // var query = "exec dbo.sp_insert_person 'vipul.sarin@google.com','abcde','Vipul','Sarin'"
-    var query = "exec dbo.sp_service :email, :title, :description, :category";
+    var query = "exec dbo.sp_service :email, :category, :title, :description,";
     sequelize.query(query, { replacements: {email: email }, type: sequelize.QueryTypes.SELECT})
         .then(function(new_requests,error) {
             console.log(JSON.stringify("exec dbo.sp_toprequests successful"+JSON.stringify(new_requests)));
@@ -30,7 +32,7 @@ exports.submitService = function(req, res, next){
     title = req.body.title,
         description = req.body.description,
         category = 'bcd';
-    var query = "exec dbo.sp_service :email, :title, :description, :category";
+    var query = "exec dbo.sp_service :email,:category, :title, :description";
     sequelize.query(query, { replacements: {email: email, title: title, description: description, category: category }, type: sequelize.QueryTypes.SELECT})
         .then(function(response,error) {
             console.log(JSON.stringify("exec dbo.sp_service successful"+JSON.stringify(response)));
