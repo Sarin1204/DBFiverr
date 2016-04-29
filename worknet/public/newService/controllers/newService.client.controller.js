@@ -25,7 +25,7 @@ angular.module('newService').controller('NewServiceController',['$scope',
 
             service.$save(function(response){
                 /*$window.location.href='http://localhost:3000/api/checkchild';*/
-                $location.path('/newService')
+                $location.path('/dashboard')
             }, function(errorResponse){
                 console.log('error'+JSON.stringify(errorResponse));
                 $scope.error = errorResponse.data.message;
